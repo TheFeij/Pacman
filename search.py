@@ -61,7 +61,6 @@ class SearchProblem:
         """
         util.raiseNotDefined()
 
-
 def tinyMazeSearch(problem):
     """
     Returns a sequence of moves that solves tinyMaze.  For any other maze, the
@@ -87,16 +86,103 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # initialize the search tree using initial state of the problem
+    fringe = util.Stack()
+    ways = util.Stack()
+    currState = problem.getStartState()
+    fringe.push(currState)
+    list1 = []
+    ways.push(list1)
+    expandedNodes = []
+    while True:
+        if fringe.isEmpty():
+            return None
+        currState = fringe.pop()
+        if problem.isGoalState(currState):
+            list1 = ways.pop()
+            return list1
+        successors = problem.getSuccessors(currState)
+        expandedNodes.append(currState)
+        tempList = ways.pop()
+        for i in range(len(successors)):
+            if not (successors[i][0] in expandedNodes):
+                fringe.push(successors[i][0])
+                copyList = list.copy(tempList)
+                copyList.append(successors[i][1])
+                ways.push(copyList)
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # initialize the search tree using initial state of the problem
+    fringe = util.Queue()
+    ways = util.Queue()
+    currState = problem.getStartState()
+    fringe.push(currState)
+    list1 = []
+    ways.push(list1)
+    fringeNodes = []
+    fringeNodes.append(currState)
+    while True:
+        if fringe.isEmpty():
+            return None
+        currState = fringe.pop()
+        if problem.isGoalState(currState):
+            return ways.pop()
+        successors = problem.getSuccessors(currState)
+        tempList = ways.pop()
+        for i in range(len(successors)):
+            if not (successors[i][0] in fringeNodes):
+                fringeNodes.append(successors[i][0])
+                fringe.push(successors[i][0])
+                copyList = list.copy(tempList)
+                copyList.append(successors[i][1])
+                ways.push(copyList)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    # initialize the search tree using initial state of the problem
+    fringe = util.PriorityQueue()
+    currState = [[], [], []]
+    currState[0].append(problem.getStartState())
+    currState[2].append(0)
+
+    fringe.push(item=currState, priority=currState[2][0])
+    fringeNodes = []
+    # uncomment the comment below and comments in lines 177-180 if you want to change ucs to dfs,
+    # cost = 1
+    while True:
+        if fringe.isEmpty():
+            return None
+        currState = fringe.pop()
+        if currState[0][0] in fringeNodes:
+            continue
+        fringeNodes.append(currState[0][0])
+        if problem.isGoalState(currState[0][0]):
+            return currState[1]
+        successors = problem.getSuccessors(currState[0][0])
+        for i in range(len(successors)):
+            if not (successors[i][0] in fringeNodes):
+                newNode = [[]]
+                newNode.append([])
+                newNode.append([])
+                newNode[0].append(successors[i][0])
+                newNode[1] = list(currState[1]).copy()
+                newNode[1].append(successors[i][1])
+                newNode[2].append(int(currState[2][0])
+                                  + successors[i][2])
+
+                # how to convert ucs to dfs, remember to also uncomment line 155
+                # newNode[2].append(int(currState[2][0])
+                #                   + cost)
+                # cost /= 2
+
+                # uncomment this code if you want to change ucs to bfs
+                # newNode[2].append(int(currState[2][0])
+                #                   + 1)
+                fringe.push(newNode, newNode[2][0])
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -109,6 +195,36 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+    # initialize the search tree using initial state of the problem
+    fringe = util.PriorityQueue()
+    currState = [[]]
+    currState.append([])
+    currState.append([])
+    currState[0].append(problem.getStartState())
+    currState[2].append(0)
+
+    fringe.push(item=currState, priority=currState[2][0])
+    fringeNodes = []
+    while True:
+        if fringe.isEmpty():
+            return None
+        currState = fringe.pop()
+        if currState[0][0] in fringeNodes:
+            continue
+        fringeNodes.append(currState[0][0])
+        if problem.isGoalState(currState[0][0]):
+            return currState[1]
+        successors = problem.getSuccessors(currState[0][0])
+        for i in range(len(successors)):
+            if not (successors[i][0] in fringeNodes):
+                newNode = [[]]
+                newNode.append([])
+                newNode.append([])
+                newNode[0].append(successors[i][0])
+                newNode[1] = list(currState[1]).copy()
+                newNode[1].append(successors[i][1])
+                newNode[2].append(int(currState[2][0]) + successors[i][2])
+                fringe.push(newNode, newNode[2][0] + heuristic(successors[i][0], problem))
     util.raiseNotDefined()
 
 

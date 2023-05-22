@@ -194,8 +194,23 @@ class PriorityQueue:
         # If item already in priority queue with higher priority, update its priority and rebuild the heap.
         # If item already in priority queue with equal or lower priority, do nothing.
         # If item not in priority queue, do the same thing as self.push.
-
         "*** YOUR CODE HERE ***"
+        newHeap = []
+        isInQueue = False
+        for index in range(0, len(self.heap)):
+            entry = heapq.heappop(self.heap)
+            if entry[2] == item:
+                isInQueue = True
+                if entry[0] > priority:
+                    entry[0] = priority
+            heapq.heappush(newHeap, entry)
+
+        heapq.heapify(newHeap)
+        self.heap = newHeap
+        if not isInQueue:
+            self.push(item, priority)
+
+
 
 class PriorityQueueWithFunction(PriorityQueue):
     """
